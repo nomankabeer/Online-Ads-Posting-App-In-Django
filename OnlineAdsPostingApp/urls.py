@@ -23,7 +23,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('u/dashboard/' , include('post.urls')),
 ]
 
 # Serving the media files in development mode
