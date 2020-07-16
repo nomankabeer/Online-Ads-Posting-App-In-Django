@@ -27,5 +27,14 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(default=datetime.datetime(2020, 4, 19, 16, 44, 7, 959637), verbose_name='date created')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
-        )
+        ),
+        migrations.CreateModel(
+            name='Gallery',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('image', models.ImageField(blank=True, null=True, upload_to='post/%Y/%m/%d/')),
+                ('created_at', models.DateTimeField(default=datetime.datetime(2020, 4, 19, 16, 44, 7, 959637), verbose_name='date created')),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='gallery', to='post.Posts')),
+            ],
+        ),
     ]
