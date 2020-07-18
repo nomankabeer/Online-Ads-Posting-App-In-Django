@@ -14,6 +14,11 @@ class Posts(models.Model):
     views = models.IntegerField(default=1)
     created_at = models.DateTimeField('date created', default=datetime.datetime.now() )
 
+    def published_recently(self):
+            return self.created_at >= timezone.now() - datetime.timedelta(days=1)
+    def __str__(self):
+        return self.title
+
     def userName(self):
         return self.user.first_name + ' ' + self.user.last_name
 
