@@ -13,3 +13,7 @@ class Posts(models.Model):
     publish = models.BooleanField( default=False , blank=False , )
     views = models.IntegerField(default=1)
     created_at = models.DateTimeField('date created', default=datetime.datetime.now() )
+
+    def userName(self):
+        return self.user.first_name + ' ' + self.user.last_name
+
