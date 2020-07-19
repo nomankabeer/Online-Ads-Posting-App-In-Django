@@ -12,11 +12,14 @@ class Posts(models.Model):
     content = models.TextField(max_length=5000, blank=True, null=True)
     publish = models.BooleanField( default=False , blank=False , )
     views = models.IntegerField(default=1)
+
     created_at = models.DateTimeField('date created', default=datetime.datetime.now() )
+
+    def galleryImages(self) :
+        return  Gallery.objects.filter(post_id=self.id)
 
     def published_recently(self):
             return self.created_at >= timezone.now() - datetime.timedelta(days=1)
-
     def __str__(self):
         return self.title
 
@@ -30,3 +33,4 @@ class Gallery(models.Model):
 
     def __str__(self):
         return self.image.name
+
