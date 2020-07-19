@@ -26,6 +26,9 @@ class Posts(models.Model):
     def userName(self):
         return self.user.first_name + ' ' + self.user.last_name
 
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
+
 class Gallery(models.Model):
     post = models.ForeignKey(Posts , on_delete=models.CASCADE , related_name='gallery')
     image = models.ImageField(upload_to='post/%Y/%m/%d/' , blank=True, null=True)
@@ -33,4 +36,15 @@ class Gallery(models.Model):
 
     def __str__(self):
         return self.image.name
+
+
+@receiver(models.signals.post_delete, sender=Gallery)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `MediaFile` object is deleted.
+    """
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
 
