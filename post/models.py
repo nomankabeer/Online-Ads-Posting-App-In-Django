@@ -48,3 +48,14 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
 
+
+@receiver(models.signals.post_delete, sender=Posts)
+def auto_delete_file_on_delete_post(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `MediaFile` object is deleted.
+    """
+    if instance.cover:
+        if os.path.isfile(instance.cover.path):
+            os.remove(instance.cover.path)
+
