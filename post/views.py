@@ -89,3 +89,10 @@ def postUpdate(request , post_id):
         messages.error(request, 'Something went wrong')
         # pass
     return redirect('/u/dashboard/post/index')
+
+
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('post.add_posts', login_url='/login', raise_exception=False)
+def postCreate(request):
+    return render(request , 'post/create.html')
+
