@@ -96,3 +96,45 @@ def postUpdate(request , post_id):
 def postCreate(request):
     return render(request , 'post/create.html')
 
+
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('post.add_posts', login_url='/login', raise_exception=False)
+@require_POST
+def postStore(request):
+    form = PostFormValidation(request.POST, request.FILES)
+    if not form.is_valid():
+        args = {'form' :  form }
+        return render(request , 'post/create.html' , args)
+    try:
+        if request.FILES['cover'] :
+            cover = request.FILES['cover'] # .name
+            cover_extesion = os.path.splitext(str(cover))[1]
+            now = datetime.datetime.now()
+            file_path = 'post/' + now.strftime("%Y") + '/' + now.strftime("%m") + '/' + now.strftime("%d") + "/" + uuid.uuid4().hex[:10].lower() + cover_extesion
+            fs = FileSystemStorage()
+            filename = fs.save(file_path , cover)
+
+        post = Posts(
+            title = request.POST['title'] ,
+            content = request.POST['content'] ,
+            cover=file_path ,
+            user_id = request.user.id )
+        post.save()
+
+        if request.FILES['gallery'] :
+            gallery = request.FILES.getlist('gallery') # .name
+            for image in gallery :
+                image_extesion = os.path.splitext(str(image))[1]
+                now = datetime.datetime.now()
+                file_path = 'post/' + now.strftime("%Y") + '/' + now.strftime("%m") + '/' + now.strftime("%d") + "/gallery/" + uuid.uuid4().hex[:10].lower() + image_extesion
+                fs = FileSystemStorage()
+                filename = fs.save(file_path , image)
+                gallery_image = post_gallery(post_id=post.id , image=file_path , created_at= timezone.now())
+                gallery_image.save()
+        messages.success(request, 'Post Created')
+    except :
+        messages.error(request, 'Something went wrong')
+    return redirect('/u/dashboard/post/index')
+
+
+
