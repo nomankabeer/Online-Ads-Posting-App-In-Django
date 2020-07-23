@@ -45,3 +45,47 @@ def postEdit(request , post_id):
     except :
         return redirect('/u/dashboard/post/index')
 
+
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('post.change_posts', login_url='/login', raise_exception=False)
+@require_POST
+def postUpdate(request , post_id):
+    form = PostFormEditValidation(request.POST, request.FILES)
+    if not form.is_valid():
+        args = {'form' :  form }
+        return render(request , 'post/create.html' , args)
+    try:
+        cover_uploaded_file_url = None
+        if request.FILES.get('cover') is not None and request.FILES['cover'] :
+            cover = request.FILES['cover'] # .name
+            cover_extesion = os.path.splitext(str(cover))[1]
+            now = datetime.datetime.now()
+            file_path = 'post/' + now.strftime("%Y") + '/' + now.strftime("%m") + '/' + now.strftime("%d") + "/" + uuid.uuid4().hex[:10].lower() + cover_extesion
+            fs = FileSystemStorage()
+            filename = fs.save(file_path , cover)
+            # cover_uploaded_file_url = fs.url(filename)
+            cover_uploaded_file_url = file_path
+
+        post = Posts.objects.get(id=post_id , user_id = request.user.id)
+        post.title = request.POST['title']
+        post.content = request.POST['content']
+        if cover_uploaded_file_url is not None :
+            post.cover=cover_uploaded_file_url
+        post.save()
+
+        if request.FILES.get('gallery') and request.FILES['gallery'] :
+            gallery = request.FILES.getlist('gallery') # .name
+            for image in gallery :
+                image_extesion = os.path.splitext(str(image))[1]
+                now = datetime.datetime.now()
+                file_path = 'post/' + now.strftime("%Y") + '/' + now.strftime("%m") + '/' + now.strftime("%d") + "/gallery/" + uuid.uuid4().hex[:10].lower() + image_extesion
+                fs = FileSystemStorage()
+                filename = fs.save(file_path , image)
+                gallery_image = post_gallery(post_id=post_id , image=file_path , created_at= timezone.now())
+                gallery_image.save()
+
+        messages.info(request, 'Post updated')
+    except :
+        messages.error(request, 'Something went wrong')
+        # pass
+    return redirect('/u/dashboard/post/index')
