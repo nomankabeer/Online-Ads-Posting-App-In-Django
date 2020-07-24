@@ -147,3 +147,15 @@ def postDelete(request , post_id):
     except :
         messages.error(request, 'Something went wrong')
     return redirect('/u/dashboard/post/index')
+
+
+# Delete single gallery image of post
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('post.delete_posts', login_url='/login', raise_exception=False)
+def deletePostGalleryImage(request , post_id , gallery_id):
+    try:
+        image = Posts.objects.get(id=post_id, user_id = request.user.id).gallery.get(id=gallery_id).delete()
+        messages.info(request, 'Image Deleted')
+    except :
+        messages.error(request, 'Something went wrong')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
