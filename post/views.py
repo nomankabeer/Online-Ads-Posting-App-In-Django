@@ -137,4 +137,13 @@ def postStore(request):
     return redirect('/u/dashboard/post/index')
 
 
-
+# Delete Post
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('post.delete_posts', login_url='/login', raise_exception=False)
+def postDelete(request , post_id):
+    try:
+       post = Posts.objects.get(id=post_id, user_id = request.user.id).delete()
+       messages.info(request, 'Post Deleted')
+    except :
+        messages.error(request, 'Something went wrong')
+    return redirect('/u/dashboard/post/index')
