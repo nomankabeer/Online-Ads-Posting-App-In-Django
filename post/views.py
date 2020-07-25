@@ -184,4 +184,15 @@ def publishPost(request , post_id , id):
 
 
 
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('post.view_posts', login_url='/login', raise_exception=False)
+def postList(request):
+    posts_all = Posts.objects.order_by('-id').all()
+    paginator = Paginator(posts_all, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+    context = {'posts': posts}
+    return  render(request , 'post/publish.html' , context)
+
+
 
