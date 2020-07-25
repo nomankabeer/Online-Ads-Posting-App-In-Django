@@ -159,3 +159,29 @@ def deletePostGalleryImage(request , post_id , gallery_id):
     except :
         messages.error(request, 'Something went wrong')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required(redirect_field_name='next', login_url='/login')
+@permission_required('auth.view_user', login_url='/login', raise_exception=False)
+def publishPost(request , post_id , id):
+    # return HttpResponse(id)
+    try:
+        if id == 1:
+            post = Posts.objects.get(id=post_id)
+            post.publish = True
+            post.save()
+            messages.success(request, 'Post Published')
+        elif id == 0:
+            post = Posts.objects.get(id=post_id)
+            post.publish = False
+            post.save()
+            messages.info(request, 'Post UnPublished')
+        else:
+            messages.error(request, 'Something went wrong')
+    except :
+        messages.error(request, 'Something went wrong')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+
