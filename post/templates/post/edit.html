@@ -1,0 +1,134 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block style %}
+<style>
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    padding: 5px;
+margin: 10px 0px;
+widthd: 30% !important;
+
+  }
+  
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+  
+  .card a {
+    width: 100%;
+  }
+
+  .panel-body {
+    
+display: inline;
+  }
+  </style>
+{% endblock %}
+{% block content %}
+<!--main content start-->
+
+		<div class="form-w3layouts">
+            <!-- page start-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            Edit Post
+                            <span class="tools pull-right">
+                                <a class="fa fa-chevron-down" href="javascript:;"></a>
+                                <!-- <a class="fa fa-cog" href="javascript:;"></a> -->
+                                <a class="fa fa-times" href="javascript:;"></a>
+                             </span>
+                        </header>
+                        <div class="panel-body">
+                            <form role="form" action="{% url 'post:update' post.id %}" method="post" class="form-horizontal " enctype="multipart/form-data">
+                              {% csrf_token %}
+                                <div class="form-group has-success1 has-warning1 has-error1">
+                                    <label class="col-lg-3 control-label">Title</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" required placeholder="" name="title" value="{{ post.title }}" id="f-name" class="form-control">
+                                        <!-- <p class="help-block">Successfully done</p> -->
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group has-success1 has-warning1 has-error1">
+                                  <label class="col-lg-3 control-label">Content</label>
+                                  <div class="col-lg-6">
+                                      <textarea type="text" required name="content" placeholder="" id="f-name" class="form-control">{{ post.content }}</textarea>
+                                      <!-- <p class="help-block">Successfully done</p> -->
+                                  </div>
+                                </div>
+
+                                <div class="form-group has-success1 has-warning1 has-error1">
+                                  <label class="col-lg-3 control-label">Cover</label>
+                                  <div class="col-lg-6">
+                                      <img class="post_edit_cover_image" src="{{ post.cover.url }}">
+                                      <input type="file" name="cover" value="{{ post.cover }}" placeholder="" id="f-name" class="form-control">
+                                      <!-- <p class="help-block">Successfully done</p> -->
+                                  </div>
+                                </div>
+
+                                <div class="form-group has-success1 has-warning1 has-error1">
+                                  <label class="col-lg-3 control-label">Gallery</label>
+                                  <div class="col-lg-6">
+                                      <input type="file" multiple name="gallery" value="{{ post.cover }}" placeholder="" id="f-name" class="form-control">
+                                      <!-- <p class="help-block">Successfully done</p> -->
+                                  </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-offset-3 col-lg-6">
+                                        <button class="btn btn-primary" type="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <!-- page end-->
+        </div>
+
+
+
+
+
+
+
+
+
+        <div class="form-w3layouts">
+          <!-- page start-->
+          <div class="row">
+              <div class="col-lg-12">
+                  <section class="panel">
+                      <header class="panel-heading">
+                          Image Gallery
+                          <span class="tools pull-right">
+                              <a class="fa fa-chevron-down" href="javascript:;"></a>
+                              <!-- <a class="fa fa-cog" href="javascript:;"></a> -->
+                              <a class="fa fa-times" href="javascript:;"></a>
+                           </span>
+                      </header>
+                      <div class="panel-body">
+                          
+
+                        {% for image in post.galleryImages %}
+                        <div class="card col-lg-4 col-md-6 col-sm-5">
+                          <img src="{{ image.image.url }}" alt="Avatar" style="width:100%; height: 150px;" >
+                            <a href="{% url 'post:deletePostGalleryImage' post.id image.id %}" class="btn btn-danger">Delete</a>
+                        </div>
+                        {% endfor %}
+
+                      </div>
+                  </section>
+              </div>
+          </div>
+          <!-- page end-->
+      </div>
+
+{% endblock %}
+
+
