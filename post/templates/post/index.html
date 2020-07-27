@@ -1,0 +1,76 @@
+{% extends "layouts/dashboard.html" %}
+{% block content %}
+
+		<div class="table-agile-info">
+ <div class="panel panel-default">
+    <div class="panel-heading">
+     Post table
+
+     <a href="{% url 'post:create' %}" class="pull-right btn btn-primary">Create Post</a>
+    </div>
+    <div>
+      <table class="table" ui-jq="footable" ui-options='{
+        "paging": {
+          "enabled": true
+        },
+        "filtering": {
+          "enabled": true
+        },
+        "sorting": {
+          "enabled": true
+        }}'>
+        <thead>
+          <tr>
+            <th data-breakpoints="xs">ID</th>
+            <th>Title</th>
+            <th>Views</th>
+            <th>Published</th>
+            <th>Created at</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for post in posts%}
+            <tr data-expanded="true">
+                <td>{{ post.id }}</td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.views }}</td>    
+                <td>{% if post.publish == 0 %} <strong class="has-error">No</strong>  {% elif post.publish == 1 %} <strong class="has-success">Yes</strong> {% endif %}  </td>    
+                <td>{{ post.created_at }}</td>    
+                <td>
+                    <button class="btn btn-primary">View Details</button>
+                    <a href="{% url 'post:edit' post.id %}" class="btn btn-info">Edit</a>
+                    <a href="{% url 'post:delete' post.id %}" class="btn btn-danger">Delete</a>
+                </td>    
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      
+      
+
+      <div class="pagination">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ posts.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+            </span>
+    
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">next</a>
+                <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+
+    
+    </div>
+  </div>
+</div>
+
+{% endblock %}
